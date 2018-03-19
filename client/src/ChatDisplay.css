@@ -1,0 +1,50 @@
+.conversationpicker-default {
+    background-color: lightgray;
+    color: black;
+}
+
+.conversationpicker-set {
+    background-color: teal;
+    color: white;
+}
+
+.message-list {
+    height: 80vh;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+}
+
+.new-message-user-input {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.remove-border {
+    border: 0;
+}
+
+.message-section {
+    background-color: lightskyblue;
+    padding-top: 10px;
+}
+
+.card-section {
+    background-color: lightslategray;
+}
+
+.message-display {
+    border-radius: 5px;
+    padding: 3px;
+}
+
+.from-message {
+    background-color: white;
+}
+
+.to-message {
+    background-color: lightgreen;
+}
+
+.message-offset {
+    margin-bottom: 5px;
+}
