@@ -19,7 +19,7 @@ def connect_db(uri=MONGODB_URI):
         DB_CONNECTION = client[DATABASE_NAME][COLLECTION_NAME]
 
 
-def create_message(from_username, to_username, message):
+def create_message(from_username, to_username, message, connection=DB_CONNECTION):
     """
     Creates a new message in the DB and returns an InsertOneResult
 
@@ -29,7 +29,7 @@ def create_message(from_username, to_username, message):
     :return: InsertOneResult
     :rtype: pymongo.results.InsertOneResult
     """
-    return DB_CONNECTION.insert_one({
+    return connection.insert_one({
         'message': message,
         'to': to_username,
         'from': from_username,
@@ -37,19 +37,19 @@ def create_message(from_username, to_username, message):
     })
 
 
-def find_message_by_id(_id):
+def find_message_by_id(_id, connection=DB_CONNECTION):
     """
     Finds a message for a given id
 
     :param ObjectId _id: Object id of a message to search for
     :return: find_one result
     """
-    return DB_CONNECTION.find_one({
+    return connection.find_one({
         '_id': _id
     })
 
 
-def _get_all_relevant_users_related_to_user(user):
+def _get_all_relevant_users_related_to_user(user, connection=DB_CONNECTION):
     """
     Helper function that is used to determine which users have been sent messages by a given users and which messages
     have been sent from a given user
@@ -72,7 +72,7 @@ def _get_all_relevant_users_related_to_user(user):
         },
     ]
 
-    pipeline_result = list(DB_CONNECTION.aggregate(pipeline))
+    pipeline_result = list(connection.aggregate(pipeline))
 
     if not pipeline_result:
         return None
@@ -83,7 +83,7 @@ def _get_all_relevant_users_related_to_user(user):
     return (from_result | to_result)
 
 
-def get_grouped_messages_for_user(user):
+def get_grouped_messages_for_user(user, connection=DB_CONNECTION):
     """
     Used to get all messages that have been sent to and from a user
 
@@ -99,7 +99,7 @@ def get_grouped_messages_for_user(user):
         return output
 
     for relevant_user in relevant_users:
-        query = DB_CONNECTION.find({"$or": [
+        query = connection.find({"$or": [
             {"to": relevant_user, "from": user},
             {"to": user, "from": relevant_user}
         ]}).sort([("constructed", pymongo.ASCENDING)])
