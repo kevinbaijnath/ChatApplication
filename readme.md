@@ -9,13 +9,13 @@ Inspired by the Messages application in OSX and made with <3 using Python (Flask
 Websockets are used in this application because of their ability to provide realtime communication from a client and to a server.
 
 ## Backend
-Flask was used on the backend because of its simple API and the ease of use during development.  It can also scale very well in production by adding more WSGI processes/threads
+Flask was used on the backend because of its simple API and the ease of use during development.  Setting up a simple API only requires a few files.  It can also scale very well in production by adding more WSGI processes/threads as needed.
 
 ## Frontend
-React.js was chosen on the frontend because of the
+React.js was chosen on the frontend because of its ease of use during development and its performance (VDOM).  The one way data flow also enables a greater understanding the flow of data.
 
 ## Database
-MongoDB was chosen as the DB because of its ease of use in development and its ability to scale in production.
+MongoDB was chosen as the DB because of its ease of use in development (being able to create collections and documents very quickly) and its ability to scale in production.
 
 # Prerequisites
 Python 3.x  
@@ -66,3 +66,4 @@ If there are a large number of messages that are being written, the mongoDB host
 4. Add the ability to check if a user is typing (and send that event to other people in the chat)
 5. Segment the users into channels to prevent broadcasting all of the messages to all of the users
 6. Communicate over https (both REST API and Websocket)
+7. Set up testing infrastructure
