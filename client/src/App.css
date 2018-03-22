@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  margin: 2%;
+  border-bottom: 1px solid lightgray;
 }
 
 .App-logo {

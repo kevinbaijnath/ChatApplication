@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Card, CardTitle, CardText, Input } from 'reactstrap';
 import './ChatDisplay.css';
+import Message from './Message';
+
+const BASEURL = 'http://localhost:8005';
 
 export default class ChatDisplay extends Component {
   constructor(props){
@@ -16,10 +19,11 @@ export default class ChatDisplay extends Component {
     this.createNewMessageToUser = this.createNewMessageToUser.bind(this);
     this.setNewUserInput = this.setNewUserInput.bind(this);
     this.sendNewMessage = this.sendNewMessage.bind(this);
+    this.scrollToBottom = this.scrollToBottom.bind(this);
   }
 
   componentDidMount(){
-      fetch(`http://localhost:8005/messages/${this.props.username}`)
+      fetch(`${BASEURL}/messages/${this.props.username}`)
       .then((response) => {
         return response.json()
       })
@@ -36,8 +40,8 @@ export default class ChatDisplay extends Component {
       
       const componentContext = this;
       socket.on('newly_created_message', (result) => {
-        const { messages, activeConversationUser } = componentContext.state;
-        const { to, from, message } = result.data;
+        const { messages } = componentContext.state;
+        const { to, from } = result.data;
 
         if(componentContext.props.username !== from && componentContext.props.username !== to){
             return;
@@ -53,8 +57,15 @@ export default class ChatDisplay extends Component {
             'conversation': newMessageForUser,
         }, () => {
             componentContext.forceUpdate();
+            componentContext.scrollToBottom();
         });
       });
+  }
+
+  scrollToBottom(behavior="smooth") {
+    if(this.endOfMessages){
+        this.endOfMessages.scrollIntoView({ behavior });
+    }
   }
 
   cardClick(person){
@@ -66,7 +77,7 @@ export default class ChatDisplay extends Component {
         'activeConversationUser': person,
         'conversation': conversation,
         'newMessageToWrite': ''
-    });
+    }, () => this.scrollToBottom("instant"));
   }
 
   setNewUserInput(e){
@@ -114,6 +125,11 @@ export default class ChatDisplay extends Component {
     console.log(`submitting ${newMessageToWrite}`)
   }
 
+  logout(e){
+      e.preventDefault();
+      this.props.openModal();
+  }
+
   render(){
     return(
         <Container fluid={true}>
@@ -131,7 +147,6 @@ export default class ChatDisplay extends Component {
                         <div className="message-list">
                             { Object.keys(this.state.messages).map((person) => {
                                 const className = (person === this.state.activeConversationUser) ? 'conversationpicker-set'  : 'conversationpicker-default';
-                                const messagesWithPerson = this.state.messages[person];
                                 return (
                                     <Card key={person} onClick={ this.cardClick.bind(this, person) } className={className}>
                                         <CardTitle>{person}</CardTitle>
@@ -140,42 +155,38 @@ export default class ChatDisplay extends Component {
                                 )
                             }) }
                         </div>
+                        <div className="user-information">Logged in as {this.props.username}</div>
+                        { // <a href="" onClick={this.switchUser}>(switch user)</a> 
+                        }
                     </div>
                 </Col>
                 <Col sm="8" md="8" className="message-section">
-                    <div className="message-list">
-                        {
-                            this.state.activeConversationUser ? 
-                                this.state.conversation.map((convo, index) => {
-                                    return (
-                                        <Message key={index} messageObject={convo} username={this.props.username} />
-                                    );
-                                })
-                                : null
-                        }
+                    <div className="message-section-header">
+                        { this.state.activeConversationUser ? 
+                            `Chatting with ${this.state.activeConversationUser}` : 'Select someone to chat with or start a new conversation' }
                     </div>
-                    <div>
-                        <Input type="text" value={this.state.newMessageToWrite}
-                               onChange={(e) => this.setState({newMessageToWrite: e.target.value})} className="new-message-input"
-                               onKeyPress={ this.sendNewMessage } />
+                    <div className="message-section-content">
+                        <div className="message-list">
+                            {
+                                this.state.activeConversationUser ? 
+                                    this.state.conversation.map((convo, index) => {
+                                        return (
+                                            <Message key={index} messageObject={convo} username={this.props.username} />
+                                        );
+                                    })
+                                    : null
+                            }
+                            <div ref={(el) => { this.endOfMessages = el; }} />
+                        </div>
+                        <div>
+                            <Input type="text" value={this.state.newMessageToWrite}
+                                onChange={(e) => this.setState({newMessageToWrite: e.target.value})} className="new-message-input"
+                                onKeyPress={ this.sendNewMessage } />
+                        </div>
                     </div>
                 </Col>
             </Row>
         </Container>
     )
   }
-}
-
-function Message(props){
-    const { messageObject, username } = props;
-    const baseStyle = "message-display";
-
-    const fromUser = messageObject.from === username;
-    const messageParentClass = fromUser ? "text-right" : "text-left";
-    const messageDisplayClass = fromUser ? "to-message" : "from-message";
-    return (
-        <div className={`message-offset ${messageParentClass}`}>
-            <span className={`message-display ${messageDisplayClass}`}>{ messageObject.message }</span>
-        </div>
-    )
 }

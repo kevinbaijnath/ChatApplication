@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import ChatDisplay from './ChatDisplay';
 
@@ -13,8 +12,10 @@ class App extends Component {
       'username': '',
       'usernameInput': '',
       'socket': null,
+      'forceModalOpen': false
     }
     this.setUsername = this.setUsername.bind(this);
+    this.forceModalOpen = this.forceModalOpen.bind(this);
   }
 
   componentDidMount(){
@@ -26,15 +27,22 @@ class App extends Component {
 
   setUsername(){
     this.setState({
-      username: this.state.usernameInput
+      username: this.state.usernameInput,
+      forceModalOpen: false
     });
+  }
+
+  forceModalOpen(){
+    this.setState({
+      forceModalOpen: true
+    })
   }
 
   render() {
     return (
       <div className="App">
-        { this.state.username ? <ChatDisplay username={this.state.username} socket={this.state.socket}/> :
-        <Modal isOpen={!this.state.username} className={this.props.className}>
+        { this.state.username && !this.state.forceModalOpen ? <ChatDisplay username={this.state.username} socket={this.state.socket} openModal={this.forceModalOpen}/> :
+        <Modal isOpen={!this.state.username || this.state.forceModalOpen} className={this.props.className}>
           <ModalHeader>Please enter a username to chat</ModalHeader>
           <ModalBody>
             <Input type="text" value={ this.state.usernameInput} onChange={(e) => this.setState({ usernameInput: e.target.value })} />

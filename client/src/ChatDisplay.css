@@ -4,7 +4,7 @@
 }
 
 .conversationpicker-set {
-    background-color: teal;
+    background-color: #007bff;
     color: white;
 }
 
@@ -24,12 +24,28 @@
 }
 
 .message-section {
-    background-color: lightskyblue;
-    padding-top: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.message-section-header {
+    margin: auto;
+    height: 60px;
+    background-color: #E9E8ED;
+    border-bottom: 1px solid lightgrey;
+    font-size: 1.5rem;
+    vertical-align: middle;
+    line-height: 60px;
+}
+
+.message-section-content {
+    background-color: white;
+    padding: 10px 15px 5px 15px;
 }
 
 .card-section {
-    background-color: lightslategray;
+    background-color: #E9E8ED;
+    border-right: 1px solid lightgrey;
 }
 
 .message-display {
@@ -38,13 +54,21 @@
 }
 
 .from-message {
-    background-color: white;
+    background-color: #D7D6DB;
+    padding: 5px;
 }
 
 .to-message {
-    background-color: lightgreen;
+    background-color: #007bff;
+    color: white;
+    padding: 5px;
 }
 
 .message-offset {
     margin-bottom: 5px;
+}
+
+.user-information {
+    margin-top: 30px;
+    text-align: left;
 }
